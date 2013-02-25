@@ -9,8 +9,8 @@
 import sys
 from Arquivo import leitor
 from Arquivo import escritor
-from AnalizadorSintatico import AnalizadorSintatico
-from AnalizadorLexico import AnalizadorLexico
+from AnalisadorSintatico import AnalisadorSintatico
+from AnalisadorLexico import AnalisadorLexico
 
 if __name__ == "__main__":
     arquivoParaLer = leitor(sys.argv[1])
