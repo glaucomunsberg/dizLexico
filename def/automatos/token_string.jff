@@ -18,6 +18,11 @@
 		</state>
 		<!--The list of transitions.-->
 		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>["]</read>
+		</transition>
+		<transition>
 			<from>1</from>
 			<to>2</to>
 			<read>["]</read>
@@ -25,12 +30,7 @@
 		<transition>
 			<from>1</from>
 			<to>1</to>
-			<read>[a-z,A-Z,0-9]</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>1</to>
-			<read>["]</read>
+			<read>[a-z,A-Z,0-9," " ]</read>
 		</transition>
 	</automaton>
 </structure>
