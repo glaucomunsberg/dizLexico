@@ -1,0 +1,8 @@
+in a,b,c;
+d := a ^ (b <-> c);
+if(d) {
+	out d ^ a;
+}
+else{
+	out d ^ c;
+}

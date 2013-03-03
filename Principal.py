@@ -7,12 +7,14 @@
 #     $ python Principal.py exemplo.txt log.txt
 
 import sys
-from Arquivo import leitor
-from Arquivo import escritor
+from Arquivo import arquivo
 from AnalisadorSintatico import AnalisadorSintatico
 from AnalisadorLexico import AnalisadorLexico
-
+    
 if __name__ == "__main__":
-    arquivoParaLer = leitor(sys.argv[1])
-    arquivoDeEscrita = escritor(sys.argv[2])
-    print arquivoParaLer.num_linhas()
+    lexico = AnalisadorLexico(sys.argv[1])
+    log_message = arquivo('log.txt')
+    print 'Número de linhas: ', lexico.num_linhas()
+    print 'Número de comentários: ', lexico.remover_comentarios()
+    print lexico.num_caracteries()
+    lexico.close()

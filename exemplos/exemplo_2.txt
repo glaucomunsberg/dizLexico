@@ -1,0 +1,2 @@
+in a, b,c; #comentários
+out a ^ b, a v b, a -> c;
