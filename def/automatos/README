@@ -1,0 +1,11 @@
+1.Autômatos dizLexico
+	Os autômatos criados aqui fazem parte da definição e estruturação do dizLexico.
+
+2. Requisitos
+	Para visualizar e editar os autômatos é necessário ter:
+	- Java instalado
+	- jar do JFLAP
+	- Arquivos *.jff
+
+3. Como executar
+	$ java -jar JFLAP_Thin.jar
