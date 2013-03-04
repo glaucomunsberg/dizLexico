@@ -3,39 +3,69 @@
 	<automaton>
 		<!--The list of states.-->
 		<state id="0" name="q0">
-			<x>34.0</x>
-			<y>170.0</y>
+			<x>38.0</x>
+			<y>269.0</y>
 			<initial/>
 		</state>
 		<state id="1" name="q1">
-			<x>316.0</x>
-			<y>35.0</y>
+			<x>172.0</x>
+			<y>47.0</y>
 			<final/>
 		</state>
 		<state id="2" name="q2">
-			<x>319.0</x>
-			<y>180.0</y>
+			<x>175.0</x>
+			<y>192.0</y>
 			<final/>
 		</state>
 		<state id="3" name="q3">
-			<x>320.0</x>
-			<y>106.0</y>
+			<x>176.0</x>
+			<y>118.0</y>
 			<final/>
 		</state>
 		<state id="4" name="q4">
-			<x>313.0</x>
-			<y>244.0</y>
+			<x>278.0</x>
+			<y>225.0</y>
 		</state>
 		<state id="5" name="q5">
-			<x>171.0</x>
-			<y>259.0</y>
+			<x>170.0</x>
+			<y>303.0</y>
+		</state>
+		<state id="6" name="q6">
+			<x>169.0</x>
+			<y>381.0</y>
+			<final/>
 		</state>
 		<state id="7" name="q7">
-			<x>468.0</x>
-			<y>246.0</y>
+			<x>415.0</x>
+			<y>225.0</y>
+			<final/>
+		</state>
+		<state id="8" name="q8">
+			<x>168.0</x>
+			<y>455.0</y>
 			<final/>
 		</state>
 		<!--The list of transitions.-->
+		<transition>
+			<from>0</from>
+			<to>3</to>
+			<read>'</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>8</to>
+			<read>}</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>7</to>
+			<read>&gt; </read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>5</to>
+			<read>&lt;</read>
+		</transition>
 		<transition>
 			<from>0</from>
 			<to>4</to>
@@ -43,8 +73,13 @@
 		</transition>
 		<transition>
 			<from>0</from>
-			<to>3</to>
-			<read>'</read>
+			<to>6</to>
+			<read>{</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>^</read>
 		</transition>
 		<transition>
 			<from>5</from>
@@ -55,21 +90,6 @@
 			<from>0</from>
 			<to>1</to>
 			<read>V</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>5</to>
-			<read>&lt;</read>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>7</to>
-			<read>&gt; </read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>2</to>
-			<read>^</read>
 		</transition>
 	</automaton>
 </structure>
