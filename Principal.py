@@ -16,5 +16,5 @@ if __name__ == "__main__":
     log_message = arquivo('log.txt')
     print 'Número de linhas: ', lexico.num_linhas()
     print 'Número de comentários: ', lexico.remover_comentarios()
-    print lexico.num_caracteries()
+    lexico.lexemador()
     lexico.close()
