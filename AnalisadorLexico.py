@@ -9,7 +9,9 @@ class AnalisadorLexico:
     file = None
     dicionarioDeLexemas = None
     arquivoLinhas = None
+    arquivoCaracteres = None
     arquivoNumLinhas = None
+    arquivoNumCaracteries = None
     arquivoTemp = None
     
     # Init
@@ -22,8 +24,9 @@ class AnalisadorLexico:
         self.arquivoNome = nome_arquivo
         self.log = log_m
         try:
-            self.file = open(self.arquivoNome, 'r');
+            self.file = open(self.arquivoNome, 'r')
             self.arquivoTemp = open('temp.txt','w')
+            self.arquivoCaracteres = list()
             self.arquivoLinhas = []
             self.arquivoNumLinhas = 0
             for line in self.file:
@@ -81,13 +84,13 @@ class AnalisadorLexico:
     #    caracteries válidos que há nele.
     #    @return: Número de cararecteries
     def num_caracteries(self):
-        temp = open('temp.txt','r')
-        linhas =0
+        temp = open('temp.txt','U').read().splitlines()
         for linha in temp:
-            linhas +=1
-            lista = list(linha)
-            print lista
-        return linhas
+            for caract in linha:
+                self.arquivoCaracteres.insert(0, caract)
+        self.arquivoNumCaracteries = len(self.arquivoCaracteres)
+        self.arquivoCaracteres.reverse()
+        return self.arquivoNumCaracteries
     #
     # Lexemador
     #    Método que cria a partir do temp.txt os
@@ -167,8 +170,8 @@ class QualLexema:
             self.q1(caracter)
         elif re.search('[2-9]', caracter):
             self.q42(caracter)
-        #elif ('a','b','c','d','g','h','j','l','m','n','p','q','r','s','t','u','w','x','y','w').index(caracter):
-            #self.q45(caracter)
+        elif ('a','b','c','d','g','h','j','l','m','n','p','q','r','s','t','u','w','x','y','w').index(caracter):
+            self.q45(caracter)
         elif re.search('[A-Z]', caracter):
             self.q45(caracter)
         elif caracter == 'i':
@@ -220,6 +223,7 @@ class QualLexema:
     def q2(self,processado):
         inserir = {'lexema':processado,'token':'string'}
         self.__processados.append(inserir)
+        print 'processou!'
     
     #
     # RetonraListaProcessados
