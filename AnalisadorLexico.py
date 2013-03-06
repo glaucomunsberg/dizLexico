@@ -100,7 +100,7 @@ class AnalisadorLexico:
     def lexemador(self):
         self.listaLexemas = list()
         self.listaLexemaTipo = list()
-        lexemas = QualLexema(self.arquivoTemp, self.log)
+        lexemas = QualLexema(self.arquivoTemp, self.log, self.arquivoCaracteres)
         caracterResgatado = lexemas.getProximoCaracter()
         while(caracterResgatado != None):
             print 'Caracter: ', caracterResgatado
@@ -123,27 +123,21 @@ class AnalisadorLexico:
 #    Classe que processa organizamente o temp.txt
 #
 class QualLexema:
-    __arquivo       = None
-    __processados   = None
-    __processado    = None
-    __log           = None
-    __numLinhas     = None
-    __linhaAtual    = None
-    __posicaoAtual  = None
-    
-    def __init__(self,Arquivo,Log):
-        self.__arquivo          = Arquivo
-        self.__processados      = list()
-        self.__log              = Log
-        self.__numLinhas        = 0
-        self.__linhaAtual       = 0
-        self.__linhaConteudo    = list()
-        self.__posicaoAtual     = 0
-        self.__processado       = None
-        for linha in self.arquivo:
-            self.__numLinhas +=1
-        self.__linhaConteudo = list(self.arquivo[0])
-        print 'linhas',self.__numLinhas
+    __arquivo           = None
+    __processados       = None
+    __processou         = None
+    __log               = None
+    __arquivoCaracteres = None
+    __arquivoNumCaracteres = None
+    __caracterAtual     = None
+    def __init__(self,Arquivo,Log,arquivoCaracteres):
+        self.__arquivo              = Arquivo
+        self.__processados          = list()
+        self.__log                  = Log
+        self.__processou            = None
+        self.__arquivoCaracteres    = arquivoCaracteres
+        self.__caracterAtual        = -1
+        self.__arquivoNumCaracteres = len(arquivoCaracteres)
     #  
     # GetProximoCaracter
     #    retorna o próximo caracterie até que não
@@ -151,18 +145,11 @@ class QualLexema:
     #    @return: caracter ou None (final)
     #
     def getProximoCaracter(self):
-        if(self.__posicaoAtual <= self.__linhaAtual):
-            if(self.__linhaAtual <= self.__numLinhas):
-                self.__posicaoAtual+=1
-                return self.__linhaConteudo[self.__posicaoAtual-1]
-            else:
-                return None
+        if self.__caracterAtual <= self.__arquivoNumCaracteres:
+            self.__caracterAtual+=1
+            return self.__arquivoCaracteres[self.__caracterAtual]
         else:
-            self.__linhaAtual+=1
-            self.__linhaConteudo = list(self.arquivo[self.__linhaAtual])
-            self.__posicaoAtual = 1
-            return self.__linhaConteudo[0]
-        return None
+            return None
     
     def q0(self):
         caracter = self.getProximoCaracter()
