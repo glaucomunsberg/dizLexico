@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, os, re
+import sys, os, re, exceptions
 from Arquivo import arquivo
 
 class AnalisadorLexico:
@@ -97,16 +97,9 @@ class AnalisadorLexico:
     #    lexemas e o token a qual ele pertece.
     #    @return: Númerode lexemas processados
     #
-    def lexemador(self):
-        self.listaLexemas = list()
-        self.listaLexemaTipo = list()
+    def criarLexemas(self):
         lexemas = QualLexema(self.arquivoTemp, self.log, self.arquivoCaracteres)
-        caracterResgatado = lexemas.getProximoCaracter()
-        while(caracterResgatado != None):
-            print 'Caracter: ', caracterResgatado
-            caracterResgatado = lexemas.getProximoCaracter()
-        else:
-            print 'Final'
+        lexemas.levantarLexemas()
     
     #
     # Close
@@ -117,19 +110,20 @@ class AnalisadorLexico:
         os.remove('temp.txt')
         self.arquivoTemp.close()
         self.file.close()
-        
+       
 #
 # QualLexema
 #    Classe que processa organizamente o temp.txt
 #
 class QualLexema:
-    __arquivo           = None
-    __processados       = None
-    __processou         = None
-    __log               = None
-    __arquivoCaracteres = None
-    __arquivoNumCaracteres = None
-    __caracterAtual     = None
+    __arquivo               = None
+    __processados           = None
+    __processou             = None
+    __log                   = None
+    __arquivoCaracteres     = None
+    __arquivoNumCaracteres  = None
+    __caracterAtual         = None
+    __expressaoRegular      = None
     def __init__(self,Arquivo,Log,arquivoCaracteres):
         self.__arquivo              = Arquivo
         self.__processados          = list()
@@ -138,6 +132,7 @@ class QualLexema:
         self.__arquivoCaracteres    = arquivoCaracteres
         self.__caracterAtual        = -1
         self.__arquivoNumCaracteres = len(arquivoCaracteres)
+        self.__expressaoRegular     = re.compile("[*0-9a-z,\"-.(){}=+;' *]")
     #  
     # GetProximoCaracter
     #    retorna o próximo caracterie até que não
@@ -145,72 +140,129 @@ class QualLexema:
     #    @return: caracter ou None (final)
     #
     def getProximoCaracter(self):
-        if self.__caracterAtual <= self.__arquivoNumCaracteres:
+        if self.__caracterAtual+1 < self.__arquivoNumCaracteres:
             self.__caracterAtual+=1
             return self.__arquivoCaracteres[self.__caracterAtual]
         else:
             return None
-    
-    def q0(self):
-        caracter = self.getProximoCaracter()
-        if caracter == '"':
-            self.q1(caracter)
-        elif re.search('[2-9]', caracter):
-            self.q42(caracter)
-        elif ('a','b','c','d','g','h','j','l','m','n','p','q','r','s','t','u','w','x','y','w').index(caracter):
-            self.q45(caracter)
-        elif re.search('[A-Z]', caracter):
-            self.q45(caracter)
-        elif caracter == 'i':
-            self.q3(caracter)
-        elif caracter == 'o':
-            self.q6(caracter)
-        elif caracter == 'e':
-            self.q9(caracter)
-        elif caracter == 'f':
-            self.q25(caracter)
-        elif caracter == 'v':
-            self.q15(caracter)
-        elif caracter == 'V':
-            self.q31(caracter)
-        elif caracter == '1':
-            self.q13(caracter)
-        elif caracter == '+':
-            self.q40(caracter)
-        elif caracter == '0':
-            self.q14(caracter)
-        elif caracter == '-':
-            self.q34(caracter)
-        elif caracter == '\'':
-            self.q32(caracter)
-        elif caracter == '^':
-            self.q33(caracter)
-        elif caracter == '<':
-            self.q36(caracter)
-        elif caracter == ';':
-            self.q39
-        elif caracter == '=':
-            self.q43
-        elif caracter == '}':
-            self.q46(caracter)
-        elif caracter == '{':
-            self.q7(caracter)
+    #
+    # isValido
+    #    Método que retorna se o caracter é válido na linguagem
+    #
+    def isValido(self,caracter):
+        self.__expressaoRegular = re.compile("[*0-9a-z,\"-.(){}=+;' *]")
+        if self.__expressaoRegular.search(caracter):
+            return 1
         else:
-            self.q45(caracter)
+            return 0
+        
+    #
+    # LevantarLexemas
+    #    método pelo qual levanta todos os lexemas
+    #    e tokens contidas no programa
+    #
+    def levantarLexemas(self):
+        caracter = self.getProximoCaracter()
+        while( caracter != None):
+            try:
+                self.q0(caracter)
+            except Exception,e:
+                print e
+                break
+            caracter = self.getProximoCaracter()
+        else:
+            print 'Final do arquivo'
+    
+    
+    
+    def q0(self,caracter):
+        if self.isValido(caracter):
+            if caracter == '"':
+                self.q1(caracter)
+            elif caracter == '0':
+                self.q2(caracter)
+            else:
+                raise Exception, "10 com "+caracter+". Oops! Não sei o que fazer"
+        else:
+            raise Exception, "q0 com "+caracter+" não é valido!"
             
     def q1(self,processado):
-        proximo = self.getProximoCaracter()
-        if(proximo == '"'):
-            processado = processado+'"'
-            self.q2(processado)
+        
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if caracter == 'f':
+                self.q25(processado+caracter)
+            elif caracter == 'v':
+                self.q15(processado+caracter)
+            elif caracter == 't':
+                self.q14(processado+caracter)
+            else:
+                raise Exception, "q1 com "+caracter+". Oops! Não sei o que fazer"
         else:
-            processado = processado+proximo
-            self.q1(processado)
-    
+            raise Exception, "q1 com "+caracter+" não é valido!"
+    #
+    # FINAL
+    #     false_logico
+    #    
     def q2(self,processado):
-        inserir = {'lexema':processado,'token':'string'}
+        inserir = {'lexema':processado,'token':'false'}
         self.__processados.append(inserir)
-        print 'processou!'
+        print 'criado:',inserir
+        
+    def q25(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if caracter == '\"':
+                self.q2(processado+caracter)
+            elif caracter == 'a':
+                self.q26(processado+caracter)
+            else:
+                raise Exception, "q25 com "+caracter+". Oops! Não sei o que fazer"
+        else:
+            raise Exception, "q25 com "+caracter+" não é valido!"
+        
+    def q26(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if caracter == 'l':
+                self.q27(processado+caracter)
+            else:
+                raise Exception, "q26 com "+caracter+". Oops! Não sei o que fazer"
+        else:
+            raise Exception, "q26 com "+caracter+" não é valido!"
+
+    def q27(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if caracter == 's':
+                self.q28(processado+caracter)
+            else:
+                raise Exception, "q27 com "+caracter+". Oops! Não sei o que fazer"
+        else:
+            raise Exception, "q27 com "+caracter+" não é valido!"
+
+    def q28(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if caracter == 'o':
+                self.q29(processado+caracter)
+            elif caracter == 'e':
+                self.q29(processado+caracter)
+            else:
+                raise Exception, "q28 com "+caracter+". Oops! Não sei o que fazer"
+        else:
+            raise Exception, "q28 com "+caracter+" não é valido!"
+
+    def q29(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if caracter == '"':
+                self.q2(processado+caracter)
+            else:
+                raise Exception, "q29 com "+caracter+". Oops! Não sei o que fazer"
+        else:
+            raise Exception, "q29 com "+caracter+" não é valido!"
+        
     
     #
     # RetonraListaProcessados
