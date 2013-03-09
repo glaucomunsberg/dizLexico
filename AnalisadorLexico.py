@@ -62,22 +62,7 @@ class AnalisadorLexico:
         self.arquivoTemp.close()
         self.arquivoTemp = open('temp.txt','r')
         return numComentarios
-                      
-    #
-    # GetLinhas
-    #    Esse é o método pela qual se chama linha específica
-    #    do arquivo temp.txt, que contem o arquivo limpo.
-    #    @return: Retorna o conteúdo da linha ou None
-    #
-    def getLinha(self,num_linha = None):
-        if(num_linha > 0):
-            if num_linha <= self.arquivoNumLinhas:
-                return self.arquivoLinhas[num_linha-1]
-            else:
-                self.log.message(self, 'A linha não existe no arquivo.\n')
-                return None
-        else:
-            return None
+
     #
     # Num_caracteries
     #    Pega do arquivo .temp.txt o número de
@@ -92,15 +77,16 @@ class AnalisadorLexico:
         self.arquivoCaracteres.reverse()
         return self.arquivoNumCaracteries
     #
-    # Lexemador
+    # getLexemas
     #    Método que cria a partir do temp.txt os
     #    lexemas e o token a qual ele pertece.
     #    @return: Númerode lexemas processados
     #
-    def criarLexemas(self):
+    def getLexemas(self):
         lexemas = QualLexema(self.arquivoTemp, self.log, self.arquivoCaracteres)
         lexemas.levantarLexemas()
-    
+        lista = lexemas.getListaProcessada()
+
     #
     # Close
     #    Método que finaliza a execução e fecha os
@@ -124,6 +110,9 @@ class QualLexema:
     __arquivoNumCaracteres  = None
     __caracterAtual         = None
     __expressaoRegular      = None
+    __expressaoIsAlfaNum    = None
+    __expressaoNaoReserva   = None
+    
     def __init__(self,Arquivo,Log,arquivoCaracteres):
         self.__arquivo              = Arquivo
         self.__processados          = list()
@@ -132,7 +121,10 @@ class QualLexema:
         self.__arquivoCaracteres    = arquivoCaracteres
         self.__caracterAtual        = -1
         self.__arquivoNumCaracteres = len(arquivoCaracteres)
-        self.__expressaoRegular     = re.compile("[*0-9a-z,\"-.(){}=+;' *]")
+        self.__expressaoCaractVali  = re.compile("[*0-9a-zV,\"-.(){}=+;<>^' \n\t\r\b*:*]")
+        self.__expressaoIsAlfaNum   = re.compile("[*a-z0-9*]")
+        self.__expressaoNaoReserva  = re.compile("[a-df-hj-np-z]")
+        
     #  
     # GetProximoCaracter
     #    retorna o próximo caracterie até que não
@@ -145,17 +137,37 @@ class QualLexema:
             return self.__arquivoCaracteres[self.__caracterAtual]
         else:
             return None
+
     #
     # isValido
     #    Método que retorna se o caracter é válido na linguagem
     #
     def isValido(self,caracter):
-        self.__expressaoRegular = re.compile("[*0-9a-zV,\"-.(){}=+;<>^' *:*]")
-        if self.__expressaoRegular.search(caracter):
+        if caracter != None:
+            if self.__expressaoCaractVali.search(caracter):
+                return 1
+            else:
+                return 0
+        else:
+            return 0
+    #
+    # isAlfaNumerico
+    #    Método que retorna se o caracter é válido entre a-zO-1
+    #
+    def isAlfaNumerico(self,caracter):
+        if self.__expressaoIsAlfaNum.search(caracter):
             return 1
         else:
             return 0
         
+    #
+    #    método auxiliar para verificar se numerico
+    #
+    def isNaoReservado(self,caracter):
+        if self.__expressaoNaoReserva.search(caracter):
+            return 1
+        else:
+            return 0
     #
     # LevantarLexemas
     #    método pelo qual levanta todos os lexemas
@@ -166,12 +178,11 @@ class QualLexema:
         while( caracter != None):
             try:
                 self.q0(caracter)
+                caracter = self.getProximoCaracter()
             except Exception,e:
-                print e
-                break
-            caracter = self.getProximoCaracter()
+                print 'false'
         else:
-            print 'Final do arquivo'
+            self.__processou = 1
     
     def q0(self,caracter):
         if self.isValido(caracter):
@@ -179,6 +190,8 @@ class QualLexema:
                 self.q1(caracter)
             elif caracter == '0':
                 self.q2(caracter)
+            elif self.isNaoReservado(caracter):
+                self.q3(caracter)
             elif caracter == '1':
                 self.q13(caracter)
             elif caracter == 'V':
@@ -203,15 +216,22 @@ class QualLexema:
                 self.q40(caracter)
             elif caracter == ')':
                 self.q42(caracter)
+            elif caracter == 'e':
+                self.q4(caracter)
+            elif caracter == 'i':
+                self.q5(caracter)
+            elif caracter == 'o':
+                self.q6(caracter)
+            elif caracter == ',':
+                self.q30(caracter)
             elif caracter == ' ':
                 exit
             else:
-                raise Exception, "10 com "+caracter+". Oops! Não sei o que fazer"
+                exit
         else:
             raise Exception, "q0 com "+caracter+" não é valido!"
             
     def q1(self,processado):
-        
         caracter = self.getProximoCaracter()
         if self.isValido(caracter):
             if caracter == 'f':
@@ -229,16 +249,247 @@ class QualLexema:
     #     false_logico
     #    
     def q2(self,processado):
-        inserir = {'lexema':processado,'token':'false', 'token_tipo':'logico'}
+        inserir = {'token':'false', 'token_tipo':'logico'}
         self.__processados.append(inserir)
         print 'criado:',inserir
         
+    #
+    # Misto
+    #       
+    def q3(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                self.q3(processado+caracter)
+            else:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                exit
+            else:
+                raise Exception, "q3 com "+caracter+" não é valido!"
+        
+    #
+    # Misto
+    #       
+    def q4(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                if caracter == 'l':
+                    self.q7(processado+caracter)
+                else:
+                    self.q3(processado+caracter)
+            else:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q4 com "+caracter+" não é valido!"
+
+    #
+    # Misto
+    #       
+    def q5(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                if caracter == 'f':
+                    self.q10(processado+caracter)
+                elif caracter == 'n':
+                    self.q11(processado+caracter)
+                else:
+                    self.q3(processado+caracter)
+            else:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q4 com "+caracter+" não é valido!"
+            
+    #
+    # Misto
+    #       
+    def q6(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                if caracter == 'u':
+                    self.q12(processado+caracter)
+                else:
+                    self.q3(processado+caracter)
+            else:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q4 com "+caracter+" não é valido!"
+
+    #
+    # Misto
+    #       
+    def q7(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                if caracter == 's':
+                    self.q8(processado+caracter)
+                else:
+                    self.q3(processado+caracter)
+            else:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q4 com "+caracter+" não é valido!"
+
+    #
+    # Misto
+    #       
+    def q8(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                if caracter == 'e':
+                    self.q9(processado+caracter)
+                else:
+                    self.q3(processado+caracter)
+            else:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q4 com "+caracter+" não é valido!"
+
+    #
+    # Misto
+    #       
+    def q9(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                self.q3(processado+caracter)
+            else:
+                inserir = {'token':'else', 'token_tipo':'reservado'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q9 com "+caracter+" não é valido!"
+            
+    #
+    # Misto
+    #       
+    def q10(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                self.q3(processado+caracter)
+            else:
+                inserir = {'token':'if', 'token_tipo':'reservado'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q10 com "+caracter+" não é valido!"
+
+    #
+    # Misto
+    #       
+    def q11(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                self.q3(processado+caracter)
+            else:
+                inserir = {'token':'in', 'token_tipo':'reservado'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q10 com "+caracter+" não é valido!"
+
+#
+    # Misto
+    #       
+    def q12(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                if caracter == 't':
+                    self.q49(processado+caracter)
+                else:
+                    self.q3(processado+caracter)
+            else:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q4 com "+caracter+" não é valido!"
+                    
     #
     # FINAL
     #     true_logico
     #
     def q13(self,processado):
-        inserir = {'lexema':processado,'token':'true','token_tipo':'logico'}
+        inserir = {'token':'true','token_tipo':'logico'}
         self.__processados.append(inserir)
         print 'criado:',inserir
 
@@ -398,6 +649,7 @@ class QualLexema:
         else:
             raise Exception, "q28 com "+caracter+" não é valido!"
 
+
     def q29(self,processado):
         caracter = self.getProximoCaracter()
         if self.isValido(caracter):
@@ -407,12 +659,22 @@ class QualLexema:
                 raise Exception, "q29 com "+caracter+". Oops! Não sei o que fazer"
         else:
             raise Exception, "q29 com "+caracter+" não é valido!"
+        
+    #
+    # FINAL
+    #     virgula_comando
+    #    
+    def q30(self,processado):
+        inserir = {'token':'virgula','tipo_token':'comando' }
+        self.__processados.append(inserir)
+        print 'criado:',inserir
+        
     #
     # FINAL
     #     operador_ou
     #    
     def q31(self,processado):
-        inserir = {'lexema':processado,'token':'ou','tipo_token':'operador'}
+        inserir = {'token':'ou','tipo_token':'operador'}
         self.__processados.append(inserir)
         print 'criado:',inserir
 
@@ -421,7 +683,7 @@ class QualLexema:
     #     operador_e
     #    
     def q32(self,processado):
-        inserir = {'lexema':processado,'token':'negacao','tipo_token':'operador'}
+        inserir = {'token':'negacao','tipo_token':'operador'}
         self.__processados.append(inserir)
         print 'criado:',inserir
                         
@@ -430,7 +692,7 @@ class QualLexema:
     #     operador_e
     #    
     def q33(self,processado):
-        inserir = {'lexema':processado,'token':'e','tipo_token':'operador'}
+        inserir = {'token':'e','tipo_token':'operador'}
         self.__processados.append(inserir)
         print 'criado:',inserir
 
@@ -449,7 +711,7 @@ class QualLexema:
     #     operador_condicional
     #    
     def q35(self,processado):
-        inserir = {'lexema':processado,'token':'condicional','tipo_token':'operador'}
+        inserir = {'token':'condicional','tipo_token':'operador'}
         self.__processados.append(inserir)
         print 'criado:',inserir
         
@@ -478,16 +740,16 @@ class QualLexema:
     #     operador_bicondicional
     #    
     def q38(self,processado):
-        inserir = {'lexema':processado,'token':'bicondicional','tipo_token':'operador'}
+        inserir = {'token':'bicondicional','tipo_token':'operador'}
         self.__processados.append(inserir)
         print 'criado:',inserir
     
     #
     # FINAL
-    #     operador_bicondicional
+    #     fim_comando
     #    
     def q39(self,processado):
-        inserir = {'lexema':processado,'token':'fim_comando','tipo_token':'fim_comando'}
+        inserir = {'token':'fim','tipo_token':'comando'}
         self.__processados.append(inserir)
         print 'criado:',inserir
     #
@@ -495,7 +757,7 @@ class QualLexema:
     #     inicio_expressao
     #    
     def q40(self,processado):
-        inserir = {'lexema':processado,'token':'inicio','tipo_token':'expressao' }
+        inserir = {'token':'inicio','tipo_token':'expressao' }
         self.__processados.append(inserir)
         print 'criado:',inserir
                         
@@ -514,7 +776,7 @@ class QualLexema:
     #     fim_expressao
     #    
     def q42(self,processado):
-        inserir = {'lexema':processado,'token':'fim','tipo_token':'expressao' }
+        inserir = {'token':'fim','tipo_token':'expressao' }
         self.__processados.append(inserir)
         print 'criado:',inserir
         
@@ -522,17 +784,18 @@ class QualLexema:
         caracter = self.getProximoCaracter()
         if self.isValido(caracter):
             if caracter == '=':
-                self.q45(processado+caracter)
+                self.q44(processado+caracter)
             else:
-               raise Exception, "q41 com "+caracter+". Oops! Não sei o que fazer"
+               raise Exception, "q43 com "+caracter+". Oops! Não sei o que fazer"
         else:
-            raise Exception, "q41 com "+caracter+" não é valido!"
+            raise Exception, "q43 com "+caracter+" não é valido!"
+
     #
     # FINAL
     #     operador_atribuicao
     #    
     def q44(self,processado):
-        inserir = {'lexema':processado,'token':'atribuicao','tipo_token':'operador'}
+        inserir = {'token':'atribuicao','tipo_token':'operador'}
         self.__processados.append(inserir)
         print 'criado:',inserir      
 
@@ -551,7 +814,7 @@ class QualLexema:
     #     fim_bloco
     #    
     def q46(self,processado):
-        inserir = {'lexema':processado,'token':'fim','tipo_token':'bloco' }
+        inserir = {'token':'fim','tipo_token':'bloco' }
         self.__processados.append(inserir)
         print 'criado:',inserir
 
@@ -560,7 +823,7 @@ class QualLexema:
     #     inicio_bloco
     #    
     def q47(self,processado):
-        inserir = {'lexema':processado,'token':'inicio','tipo_token':'bloco' }
+        inserir = {'token':'inicio','tipo_token':'bloco' }
         self.__processados.append(inserir)
         print 'criado:',inserir
                 
@@ -572,17 +835,38 @@ class QualLexema:
             else:
                raise Exception, "q48 com "+caracter+". Oops! Não sei o que fazer"
         else:
-            raise Exception, "q48 com "+caracter+" não é valido!"    
+            raise Exception, "q48 com "+caracter+" não é valido!"   
+        
+    #
+    # Misto
+    #       
+    def q49(self,processado):
+        caracter = self.getProximoCaracter()
+        if self.isValido(caracter):
+            if self.isAlfaNumerico(caracter):
+                self.q3(processado+caracter)
+            else:
+                inserir = {'token':'out', 'token_tipo':'reservado'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+                self.q0(caracter)
+        else:
+            if caracter == None:
+                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                self.__processados.append(inserir)
+                print 'criado:',inserir
+            else:
+                raise Exception, "q9 com "+caracter+" não é valido!" 
 
     #
-    # RetonraListaProcessados
+    # getListaProcessada
     #    Retonar uma lista de dicionários que contém
     #    cada um dos lexemas e seus tokens
     #    @return: list(dict['lexema'=>'token'],...,dict['lexema'=>'token'])
     #
-    def retornaListaProcessados(self):
-        if(self.__processados):
-            return self.__processado
+    def getListaProcessada(self):
+        if(self.__processou):
+            return self.__processou
         else:
             return self.__processados
         

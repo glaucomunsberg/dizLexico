@@ -17,4 +17,4 @@ if __name__ == "__main__":
     print 'Número de linhas: ', lexico.num_linhas()
     print 'Número de comentários: ', lexico.remover_comentarios()
     print 'Numero de caracteries: ',lexico.num_caracteries()
-    lexico.criarLexemas()
+    lexico.getLexemas()
