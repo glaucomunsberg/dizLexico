@@ -85,7 +85,7 @@ class AnalisadorLexico:
     def getLexemas(self):
         lexemas = QualLexema(self.arquivoTemp, self.log, self.arquivoCaracteres)
         lexemas.levantarLexemas()
-        lexemas.getListaProcessada()
+        return lexemas.getListaProcessada()
 
     #
     # Close
@@ -184,20 +184,19 @@ class QualLexema:
             except Exception,e:
                 raise Exception,e
         else:
-            self.__tokensProcessados.reverse()
             self.__processouTokens = 1
             
     #
     # getListaProcessada
     #    Retonar uma lista de dicionários que contém
     #    cada um dos lexemas e seus tokens
-    #    @return: list(dict['lexema'=>'token'],...,dict['lexema'=>'token'])
+    #    @return: list(dict['lexema'=>'valor','token'=>'valor','token_tipo'=>'valor'], ... ,dict['lexema'=>'valor','token'=>'valor','token_tipo'=>'valor'])
     #
     def getListaProcessada(self):
         if self.__processouTokens:
             return self.__tokensProcessados
         else:
-            self.__log.write('\nNão há tokens processados,chame antes levantarLexemas()\n')
+            self.__log.write('\nNão há tokens processados,chame antes o método levantarLexemas()\n')
             return self.__processouTokens
 
 

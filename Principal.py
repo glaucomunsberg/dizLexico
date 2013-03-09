@@ -20,11 +20,20 @@ if __name__ == "__main__":
         lexico = AnalisadorLexico(sys.argv[1],log)
         numLinhas       = lexico.num_linhas()
         log.write('Número de Linhas: '+str(numLinhas)+'\n')
+        
         numComentarios  = lexico.remover_comentarios()
         log.write('Número de Comentários: '+str(numComentarios)+'\n')
+        
         numCaracteres   = lexico.num_caracteries()
         log.write('Número de Caracteres'+str(numCaracteres)+'\n')
-        lexico.getLexemas()
+        
+        listaLexemas = lexico.getLexemas()
+        if listaLexemas == 0:
+            raise Exception, 'Algo de errado ocorreu no levantamento dos lexemas'
+        else:
+            sintatico = AnalisadorSintatico(listaLexemas,log)
+            sintatico.iniciar()
+            
         lexico.close()
     except Exception,e:
         log.write('\n'+str(e))
