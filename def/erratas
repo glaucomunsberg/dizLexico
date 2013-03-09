@@ -1,0 +1,9 @@
+Erratas
+	1. Ignorar
+		Espaços em branco, tabulações e quebras de linhas múltiplas no documento fonte devem ser desconsideradas.
+		
+	2. Operador
+		Usar para o operador OU o símbolo V (letra v maiúscula)
+		
+	3. Cometários
+		Cometários serão apenas de uma linha com início em '#' e término com o última caracter da linha sendo esse não ou especial

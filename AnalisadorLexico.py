@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, os, re, exceptions
-from Arquivo import arquivo
-
+import os, re
 class AnalisadorLexico:
     log = None
     arquivoNome = None
@@ -103,7 +101,7 @@ class AnalisadorLexico:
        
 #
 # QualLexema
-#    Classe que processa organizamente o temp.txt
+#    Classe que processa organicamente o temp.txt
 #
 class QualLexema:
     __arquivo               = None
@@ -201,7 +199,15 @@ class QualLexema:
         else:
             self.__log.write('\nNão há tokens processados,chame antes levantarLexemas()\n')
             return self.__processouTokens
-            
+
+
+    #
+    #                                 IMPORTANTE
+    #    é importante ter em mente que os métodos aqui abaixo descritos e interados
+    #    são reflexos dos autômatros criados e principalmente o comportamento geral
+    #    visto no tokens e eles cada método tem o mesmo nome de cada estado.
+    
+    
     def q0(self,caracter):
         if self.isValido(caracter):
             if caracter == '"':

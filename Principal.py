@@ -18,10 +18,14 @@ if __name__ == "__main__":
     log.write(horaSessao+' Sessão Início\n')
     try:
         lexico = AnalisadorLexico(sys.argv[1],log)
-        print 'Número de linhas: ', lexico.num_linhas()
-        print 'Número de comentários: ', lexico.remover_comentarios()
-        print 'Numero de caracteries: ',lexico.num_caracteries()
+        numLinhas       = lexico.num_linhas()
+        log.write('Número de Linhas: '+str(numLinhas)+'\n')
+        numComentarios  = lexico.remover_comentarios()
+        log.write('Número de Comentários: '+str(numComentarios)+'\n')
+        numCaracteres   = lexico.num_caracteries()
+        log.write('Número de Caracteres'+str(numCaracteres)+'\n')
         lexico.getLexemas()
+        lexico.close()
     except Exception,e:
         log.write('\n'+str(e))
         print 'false'
