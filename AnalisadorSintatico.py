@@ -39,5 +39,34 @@ class AnalisadorSintatico:
     def iniciar(self):
         token = self.proximoToken()
         while(token != None):
-            print token
+            self.init(token)
             token = self.proximoToken()
+            
+            
+    def init(self,token):
+        if token['token'] == 'identificador':
+            self.identificador()
+        elif token['token'] == 'atribuicao':
+            print token['token']
+        elif token['token'] == 'virgula':
+            print token['token']
+        elif token['token'] == 'valor_logico':
+            print token['token']
+        elif token['token'] == 'e' or token['token'] == 'o' or token['token'] == 'bicondicional' or token['token'] == 'condicional':
+            print token['token']
+        elif token['token'] == 'negacao':
+            print token['token']
+        elif token['token'] == 'if':
+            print token['token']
+        elif token['token'] == 'else':
+            print token['token']
+        elif token['token'] == 'in':
+            print token['token']
+        elif token['token'] == 'out':
+            self.out()
+        elif token['token'] == 'inicio_expressao':
+            print token['token']
+        elif token['token'] == 'fim_expressao':
+            print token['token']
+        elif token['token'] == 'inicio_bloco':
+            print token['token']

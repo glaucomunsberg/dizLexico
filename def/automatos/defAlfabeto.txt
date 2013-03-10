@@ -34,22 +34,21 @@ Definição do Alfabeto
 			C Comando
 			D Else ou não
 			H Else
-			I if
 			A Ifexpresao
 
 	Atribuicao
 		S - viE;
 	
 	expressão
-		E - EoE
-		E - EeE
-		E - EcE
-		E - EbE
 		E - (E)
+		E - EbE
+		E - EcE
+		E - EeE
+		E - EoE
 		E - V
 		V - v
 		V - F
-	
+		F - VrV
 		E - 0
 		E - 1
 		E - EN
@@ -63,10 +62,6 @@ Definição do Alfabeto
 	
 	Entrada
 		S - tF;
-	
-	Virgula
-		F - VrV (variaveis dividido por virgula)
-		F - v
 		
 	Ifelse
 	 S - I
@@ -83,3 +78,14 @@ Definição do Alfabeto
 	 C - tFC
 	 C - sEC
 	 C - vazio
+	 
+	 precendica | Operador
+	 (E)	esquerda para direita
+	 EN
+	 condiconal
+	 bicondicional
+	 e
+	 o
+	 =
+	 
+	 

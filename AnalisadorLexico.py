@@ -799,7 +799,7 @@ class QualLexema:
     #     fim_expressao
     #    
     def q42(self,processado):
-        inserir = {'token':'fim_expressa' }
+        inserir = {'token':'fim_expressao' }
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
         
