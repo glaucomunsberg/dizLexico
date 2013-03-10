@@ -69,6 +69,8 @@ class AnalisadorSintatico:
             self.in1(token)
         elif token['token'] == 'out':
             self.out1(token)
+        elif token['token'] == 'identificador':
+            self.iden1(token)
     
     def in1(self,token): 
         proxToken = self.proximoToken()
@@ -95,15 +97,15 @@ class AnalisadorSintatico:
             self.out2(proxToken)
         elif proxToken['token'] == 'identificador':
             self.out3(proxToken)
-        elif proxToken['token'] == 'inicio_expressao':
-            self.contadorParen+=1
-            self.out1(proxToken)
-            proxToken = self.proximoToken()
-            if proxToken['token'] == 'fim_expressao':
-                self.contadorParen-=1
-                None
-            else:
-                raise Exception, 'Out1 expressao não correta!'
+        #elif proxToken['token'] == 'inicio_expressao':
+            #self.contadorParen+=1
+            #self.out1(proxToken)
+            #proxToken = self.proximoToken()
+            #if proxToken['token'] == 'fim_expressao':
+                #self.contadorParen-=1
+                #None
+            #else:
+                #raise Exception, 'Out1 expressao não correta!'
         else:
             raise Exception, 'out1 não correto'
             
@@ -130,8 +132,36 @@ class AnalisadorSintatico:
             self.out1(proxToken)
         elif proxToken['token'] =='negacao':
             self.out3(proxToken)
-        elif proxToken['token'] == 'fim_expressao':
-            self.insereProximoToken(proxToken)
-            None
+        #elif proxToken['token'] == 'fim_expressao':
+            #self.insereProximoToken(proxToken)
+            #None
         else:
             raise Exception, 'out3 não correto!'
+        
+    def iden1(self, token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'atribuicao':
+            self.iden2(proxToken)
+        else:
+            raise Exception, 'iden1 não válido'
+        
+    def iden2(self, token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'valor_logico':
+            self.iden3(proxToken)
+        elif proxToken['token'] == 'identificador':
+            self.iden3(proxToken)
+        else:
+            raise Exception, 'iden2 não válido'
+        
+    def iden3(self,token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'fim_comando':
+            None
+        elif proxToken['token'] == 'negacao':
+            self.iden3(proxToken)
+        elif self.isOperador(proxToken):
+            self.iden2(proxToken)
+        else:
+            raise Exception, 'iden3 não é válido'
+            
