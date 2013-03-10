@@ -5,6 +5,7 @@ class AnalisadorSintatico:
     __posicaoLista  = None
     __tamanhoLista  = None
     __log           = None
+    contadorParen   = 0
     
     #
     # AnalisadorSintatico
@@ -33,6 +34,19 @@ class AnalisadorSintatico:
         except:
             self.__log.write('Fim da lista\n')
             return None
+        
+    def insereProximoToken(self,token):
+        try:
+            self.__listaTokens.insert(0,token)
+        except:
+            raise Exception, 'Não inseriu na lista'
+        
+    def isBalanceado(self):
+        if self.contadorParen == 0:
+            return 1
+        else:
+            return None
+        
     #
     # Inicia a verificação os lexemas
     #    
@@ -42,31 +56,82 @@ class AnalisadorSintatico:
             self.init(token)
             token = self.proximoToken()
             
-            
+    def isOperador(self,token):
+        if token['token'] == 'bicondicional' or token['token'] == 'condicional' or token['token'] == 'e' or token['token'] == 'ou':
+            return 1
+        else:
+            return None
+        
     def init(self,token):
-        if token['token'] == 'identificador':
-            self.identificador()
-        elif token['token'] == 'atribuicao':
-            print token['token']
-        elif token['token'] == 'virgula':
-            print token['token']
-        elif token['token'] == 'valor_logico':
-            print token['token']
-        elif token['token'] == 'e' or token['token'] == 'o' or token['token'] == 'bicondicional' or token['token'] == 'condicional':
-            print token['token']
-        elif token['token'] == 'negacao':
-            print token['token']
-        elif token['token'] == 'if':
-            print token['token']
-        elif token['token'] == 'else':
-            print token['token']
+        if token == None:
+            return 1
         elif token['token'] == 'in':
-            print token['token']
+            self.in1(token)
         elif token['token'] == 'out':
-            self.out()
-        elif token['token'] == 'inicio_expressao':
-            print token['token']
-        elif token['token'] == 'fim_expressao':
-            print token['token']
-        elif token['token'] == 'inicio_bloco':
-            print token['token']
+            self.out1(token)
+    
+    def in1(self,token): 
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'identificador':
+            self.in2(proxToken)
+        else:
+            raise Exception, 'In1 não correto!'
+        
+    def in2(self,token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'virgula':
+            self.in1(proxToken)
+        elif proxToken['token'] == 'fim_comando':
+            if self.contadorParen == 0:
+                None
+            else:
+                raise Exception, 'Erro in2 não balanceado'
+        else:
+            raise Exception, 'In2 não correto!'
+      
+    def out1(self,token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'valor_logico':
+            self.out2(proxToken)
+        elif proxToken['token'] == 'identificador':
+            self.out3(proxToken)
+        elif proxToken['token'] == 'inicio_expressao':
+            self.contadorParen+=1
+            self.out1(proxToken)
+            proxToken = self.proximoToken()
+            if proxToken['token'] == 'fim_expressao':
+                self.contadorParen-=1
+                None
+            else:
+                raise Exception, 'Out1 expressao não correta!'
+        else:
+            raise Exception, 'out1 não correto'
+            
+             
+    def out2(self,token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'fim_comando':
+            if self.contadorParen == 0:
+                None
+            else:
+                raise Exception, 'Erro in2 não balanceado'
+        elif self.isOperador(proxToken):
+            self.out1(proxToken)
+        else:
+            raise Exception, 'out2 não correto!'
+        
+    def out3(self,token):
+        proxToken = self.proximoToken()
+        if self.isOperador(proxToken):
+            self.out1(proxToken)
+        elif proxToken['token'] == 'fim_comando':
+            None
+        elif proxToken['token'] == 'virgula':
+            self.out1(proxToken)
+        elif proxToken['token'] =='negacao':
+            self.out3(proxToken)
+        elif proxToken['token'] == 'fim_expressao':
+            self.insereProximoToken(proxToken)
+            None
+        else:
+            raise Exception, 'out3 não correto!'
