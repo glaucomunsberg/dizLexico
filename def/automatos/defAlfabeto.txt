@@ -1,2 +1,85 @@
 Definição do Alfabeto
-S= {[0-9][a-z].,;()+-*{}='" }
+	S= {[0-9][a-z].,;()+-*{}='" }
+
+	Para a árvore de refutação 
+	
+		TERMINAIS (tokens)
+			i ATRIBUIÇÂO
+			v VARIÁVEL(identificador)
+			o OU
+			e E
+			c CONDICIONAL
+			b BICONDICIONAL
+			) FIM_EXPRESSAO
+			( INICIO_EXPRESSAO
+			{ INICO_BLOCO
+			} FIM_BLOCO
+			; FIM_COMANDO
+			n NEGACAO
+			t IN
+			s OUT
+			r VIRGULA
+			0 FALSE
+			1 TRUE
+			f IF
+			h ELSE 
+							
+		Não-TERMIANIS
+			S (inicial)
+			E Expressão
+			V Variaveis
+			F Variaveis com Virgula
+			N Negação
+			B Bloco
+			C Comando
+			D Else ou não
+			H Else
+			I if
+			A Ifexpresao
+
+	Atribuicao
+		S - viE;
+	
+	expressão
+		E - EoE
+		E - EeE
+		E - EcE
+		E - EbE
+		E - (E)
+		E - V
+		V - v
+		V - F
+	
+		E - 0
+		E - 1
+		E - EN
+	
+	Negação
+		N - nN
+		N - n
+	
+	Saida
+		S - sE;
+	
+	Entrada
+		S - tF;
+	
+	Virgula
+		F - VrV (variaveis dividido por virgula)
+		F - v
+		
+	Ifelse
+	 S - I
+	 I - fA
+	 A - (E)D
+	 D - { C }H
+	 H - h{ C }
+	 H - vazio
+
+	 Comando
+	 C - E;C
+	 C - IC
+	 C - viEC
+	 C - tFC
+	 C - sEC
+	 C - vazio

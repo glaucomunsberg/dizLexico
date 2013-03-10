@@ -272,7 +272,7 @@ class QualLexema:
     #     false_logico
     #    
     def q2(self,processado):
-        inserir = {'token':'false', 'token_tipo':'logico'}
+        inserir = {'token':'valor_logico', 'lexema':'false'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
         
@@ -285,13 +285,13 @@ class QualLexema:
             if self.isAlfaNumerico(caracter):
                 self.q3(processado+caracter)
             else:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 exit
@@ -310,13 +310,13 @@ class QualLexema:
                 else:
                     self.q3(processado+caracter)
             else:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -336,13 +336,13 @@ class QualLexema:
                 else:
                     self.q3(processado+caracter)
             else:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -360,13 +360,13 @@ class QualLexema:
                 else:
                     self.q3(processado+caracter)
             else:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -384,13 +384,13 @@ class QualLexema:
                 else:
                     self.q3(processado+caracter)
             else:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -408,13 +408,13 @@ class QualLexema:
                 else:
                     self.q3(processado+caracter)
             else:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -429,13 +429,13 @@ class QualLexema:
             if self.isAlfaNumerico(caracter):
                 self.q3(processado+caracter)
             else:
-                inserir = {'token':'else', 'token_tipo':'reservado'}
+                inserir = {'token':'else'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -450,13 +450,13 @@ class QualLexema:
             if self.isAlfaNumerico(caracter):
                 self.q3(processado+caracter)
             else:
-                inserir = {'token':'if', 'token_tipo':'reservado'}
+                inserir = {'token':'if'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -471,13 +471,13 @@ class QualLexema:
             if self.isAlfaNumerico(caracter):
                 self.q3(processado+caracter)
             else:
-                inserir = {'token':'in', 'token_tipo':'reservado'}
+                inserir = {'token':'in'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -495,13 +495,13 @@ class QualLexema:
                 else:
                     self.q3(processado+caracter)
             else:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
             else:
@@ -512,7 +512,7 @@ class QualLexema:
     #     true_logico
     #
     def q13(self,processado):
-        inserir = {'token':'true','token_tipo':'logico'}
+        inserir = {'token':'valor_logico','lexema':'true'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
 
@@ -688,7 +688,7 @@ class QualLexema:
     #     virgula_comando
     #    
     def q30(self,processado):
-        inserir = {'token':'virgula','tipo_token':'comando' }
+        inserir = {'token':'virgula' }
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
         
@@ -697,7 +697,7 @@ class QualLexema:
     #     operador_ou
     #    
     def q31(self,processado):
-        inserir = {'token':'ou','tipo_token':'operador'}
+        inserir = {'token':'ou'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
 
@@ -706,7 +706,7 @@ class QualLexema:
     #     operador_e
     #    
     def q32(self,processado):
-        inserir = {'token':'negacao','tipo_token':'operador'}
+        inserir = {'token':'negacao'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
                         
@@ -715,7 +715,7 @@ class QualLexema:
     #     operador_e
     #    
     def q33(self,processado):
-        inserir = {'token':'e','tipo_token':'operador'}
+        inserir = {'token':'e'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
 
@@ -734,7 +734,7 @@ class QualLexema:
     #     operador_condicional
     #    
     def q35(self,processado):
-        inserir = {'token':'condicional','tipo_token':'operador'}
+        inserir = {'token':'condicional'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
         
@@ -763,7 +763,7 @@ class QualLexema:
     #     operador_bicondicional
     #    
     def q38(self,processado):
-        inserir = {'token':'bicondicional','tipo_token':'operador'}
+        inserir = {'token':'bicondicional'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
     
@@ -772,7 +772,7 @@ class QualLexema:
     #     fim_comando
     #    
     def q39(self,processado):
-        inserir = {'token':'fim','tipo_token':'comando'}
+        inserir = {'token':'fim_comando'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
     #
@@ -780,7 +780,7 @@ class QualLexema:
     #     inicio_expressao
     #    
     def q40(self,processado):
-        inserir = {'token':'inicio','tipo_token':'expressao' }
+        inserir = {'token':'inicio_expressao' }
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
                         
@@ -799,7 +799,7 @@ class QualLexema:
     #     fim_expressao
     #    
     def q42(self,processado):
-        inserir = {'token':'fim','tipo_token':'expressao' }
+        inserir = {'token':'fim_expressa' }
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
         
@@ -818,7 +818,7 @@ class QualLexema:
     #     operador_atribuicao
     #    
     def q44(self,processado):
-        inserir = {'token':'atribuicao','tipo_token':'operador'}
+        inserir = {'token':'atribuicao'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))      
 
@@ -837,7 +837,7 @@ class QualLexema:
     #     fim_bloco
     #    
     def q46(self,processado):
-        inserir = {'token':'fim','tipo_token':'bloco' }
+        inserir = {'token':'fim_bloco' }
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
 
@@ -846,7 +846,7 @@ class QualLexema:
     #     inicio_bloco
     #    
     def q47(self,processado):
-        inserir = {'token':'inicio','tipo_token':'bloco' }
+        inserir = {'token':'inicio_bloco'}
         self.__tokensProcessados.append(inserir)
         self.__log.write( '\n'+str(inserir))
                 
@@ -869,13 +869,13 @@ class QualLexema:
             if self.isAlfaNumerico(caracter):
                 self.q3(processado+caracter)
             else:
-                inserir = {'token':'out', 'token_tipo':'reservado'}
+                inserir = {'token':'out'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( '\n'+str(inserir))
                 self.q0(caracter)
         else:
             if caracter == None:
-                inserir = {'lexema':processado,'token':'identificador', 'token_tipo':'identificador'}
+                inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
                 self.__log.write( str(inserir) )
                 self.__log.write('\r\n')
