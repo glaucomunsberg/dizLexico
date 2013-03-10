@@ -1,5 +1,5 @@
 in a,b,c; 
-d := (b' v a) ^ ((b <-> c) v (c'' ^ a)')'; 
+d := (b' V a) ^ ((b <-> c) v (c'' ^ a)')'; 
 if(a ^ (b <-> c)) { 
 e := 1; 
 f := 0; 
@@ -12,6 +12,6 @@ e := 0;
 else{ 
 f := 1; 
 } 
-out d v a; 
+out d V a; 
 } 
 out e ^ f; 
