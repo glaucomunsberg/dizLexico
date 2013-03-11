@@ -5,7 +5,8 @@ class AnalisadorSintatico:
     __posicaoLista  = None
     __tamanhoLista  = None
     __log           = None
-    contadorParen   = 0
+    __contadorParen   = 0
+
     
     #
     # AnalisadorSintatico
@@ -30,7 +31,9 @@ class AnalisadorSintatico:
     #
     def proximoToken(self,posicao = 0):
         try:
-            return self.__listaTokens.pop(0)
+            topo = self.__listaTokens.pop(0)
+            print 'Próximo: '+str(topo)
+            return topo
         except:
             self.__log.write('Fim da lista\n')
             return None
@@ -42,7 +45,7 @@ class AnalisadorSintatico:
             raise Exception, 'Não inseriu na lista'
         
     def isBalanceado(self):
-        if self.contadorParen == 0:
+        if self.__contadorParen == 0:
             return 1
         else:
             return None
@@ -64,7 +67,7 @@ class AnalisadorSintatico:
         
     def init(self,token):
         if token == None:
-            return 1
+            return 0
         elif token['token'] == 'in':
             self.in1(token)
         elif token['token'] == 'out':
@@ -73,8 +76,19 @@ class AnalisadorSintatico:
             self.iden1(token)
         elif token['token'] == 'if':
             self.if1(token)
+        elif token['token'] == 'fim_comando':
+            if self.__contadorParen % 2 != 0:
+                raise Exception, 'fim_comando balanceamento está incorreto'
+            else:
+                None
+        elif token['token'] == 'fim_expressao':
+            self.__contadorParen -= 1
+            if self.__contadorParen % 2 != 0:
+                raise Exception, 'init balanceamento está incorreto'
+            else:
+                None
         else:
-            raise Exception, 'init invalido'
+            raise Exception, 'init '+str(token['token'])+' invalido\n'
     
     def in1(self,token): 
         proxToken = self.proximoToken()
@@ -88,7 +102,7 @@ class AnalisadorSintatico:
         if proxToken['token'] == 'virgula':
             self.in1(proxToken)
         elif proxToken['token'] == 'fim_comando':
-            if self.contadorParen == 0:
+            if self.__contadorParen == 0:
                 None
             else:
                 raise Exception, 'Erro in2 não balanceado'
@@ -101,6 +115,9 @@ class AnalisadorSintatico:
             self.out2(proxToken)
         elif proxToken['token'] == 'identificador':
             self.out3(proxToken)
+        elif proxToken['token'] == 'inicio_expressao':
+            self.__contadorParen+=1
+            self.expres1(proxToken)
         #elif proxToken['token'] == 'inicio_expressao':
             #self.contadorParen+=1
             #self.out1(proxToken)
@@ -111,7 +128,7 @@ class AnalisadorSintatico:
             #else:
                 #raise Exception, 'Out1 expressao não correta!'
         else:
-            raise Exception, 'out1 não correto'
+            raise Exception, 'out1 com'+str(proxToken)+'não correto'
             
              
     def out2(self,token):
@@ -156,8 +173,33 @@ class AnalisadorSintatico:
         elif proxToken['token'] == 'identificador':
             self.iden3(proxToken)
         else:
-            raise Exception, 'iden2 não válido'
+            raise Exception, 'iden2 não válido'         
+    
+    def expres1(self,token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'identificador':
+            self.expres2(token)
+        elif proxToken['token'] == 'valor_logico':
+            self.expres2(token)
+        elif proxToken['token'] == 'inicio_expressao':
+            self.__contadorParen+=1
+            self.expres1(proxToken)
+        else:
+            raise Exception, 'expres1 com '+str(proxToken['token'])+' erro!'
+        proxToken = self.proximoToken()
         
+    def expres2(self, token):
+        proxToken = self.proximoToken()
+        if self.isOperador(proxToken):
+            self.expres1(proxToken)
+        elif proxToken['token'] == 'negacao':
+            self.expres2(proxToken)
+        elif proxToken['token'] == 'fim_expressao':
+            self.__contadorParen -=1
+            None
+        else:
+            raise Exception, 'expres2 com '+str(proxToken['token'])+' erro!'
+            
     def iden3(self,token):
         proxToken = self.proximoToken()
         if proxToken['token'] == 'fim_comando':
@@ -172,6 +214,7 @@ class AnalisadorSintatico:
     def if1(self, token):
         proxToken = self.proximoToken()
         if proxToken['token'] == 'inicio_expressao':
+            self.__contadorParen+=1
             self.if2(proxToken)
         else:
             raise Exception, 'if1 não é válido'
@@ -206,19 +249,42 @@ class AnalisadorSintatico:
 
     def if5 (self, token):
         proxToken = self.proximoToken()
-        while proxToken['token']!='fim_expressao':
+        while proxToken != None and proxToken['token'] != 'fim_bloco':
             self.init(proxToken)
+            proxToken = self.proximoToken()
         else:
-            self.if6(proxToken)
-        #    raise Exception, 'if5 não é válido'
-
-    def if6 (self, token):
+            if proxToken == None:
+                None
+            else:
+                self.if6(proxToken)
+                
+    def if6(self,token):
         proxToken = self.proximoToken()
         if proxToken['token'] == 'else':
             self.if7(proxToken)
         else:
-            self.insereProximoToken(proxToken)
-
-    # def if7 (self, token):
-    #     proxToken = self.proximoToken()
-    #     if
+            raise Exception, 'if6 não é válido'
+        
+    def if7(self,token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'inicio_bloco':
+            self.if8(proxToken)
+        else:
+            raise Exception, 'if7 não é válido'
+        
+    def if8(self, token):
+        proxToken = self.proximoToken()
+        while proxToken != None and proxToken['token'] != 'fim_bloco':
+            self.init(proxToken)
+            proxToken = self.proximoToken()
+        else:
+            if proxToken == None:
+                None
+            else:
+                print 'veio para cá com'+str(proxToken)
+            
+            
+            
+            
+            
+            

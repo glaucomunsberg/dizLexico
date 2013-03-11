@@ -123,9 +123,9 @@ class QualLexema:
         self.__arquivoCaracteres    = arquivoCaracteres
         self.__caracterAtual        = -1
         self.__arquivoNumCaracteres = len(arquivoCaracteres)
-        self.__expressaoCaractVali  = re.compile("[*0-9a-zV,\"-.(){}=;<>^' \n\t\r\b*:*]")
-        self.__expressaoIsAlfaNum   = re.compile("[*a-z0-9*]")
-        self.__expressaoNaoReserva  = re.compile("[a-df-hj-np-z]")
+        self.__expressaoCaractVali  = re.compile("[*0-9a-zA-Z,\"-.(){}=;<>^' \n\t\r\b*:*]")
+        self.__expressaoIsAlfaNum   = re.compile("[*a-zA-Z0-9*]")
+        self.__expressaoNaoReserva  = re.compile("[a-df-hj-np-zA-UX-Z]")
         self.__log.write('iniciando QualLexema\n')
     #  
     # GetProximoCaracter
@@ -247,7 +247,7 @@ class QualLexema:
                 self.q6(caracter)
             elif caracter == ',':
                 self.q30(caracter)
-            elif caracter == ' ':
+            elif caracter == ' ' or caracter == '\n' or caracter == '\t' or caracter == '\b' or caracter == '\r':
                 exit
             else:
                 raise Exception, "q0 com "+caracter+" não é valido!\n"
