@@ -71,6 +71,10 @@ class AnalisadorSintatico:
             self.out1(token)
         elif token['token'] == 'identificador':
             self.iden1(token)
+        elif token['token'] == 'if':
+            self.if1(token)
+        else:
+            raise Exception, 'init invalido'
     
     def in1(self,token): 
         proxToken = self.proximoToken()
@@ -164,4 +168,57 @@ class AnalisadorSintatico:
             self.iden2(proxToken)
         else:
             raise Exception, 'iden3 não é válido'
-            
+    
+    def if1(self, token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'inicio_expressao':
+            self.if2(proxToken)
+        else:
+            raise Exception, 'if1 não é válido'
+
+    def if2 (self, token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'valor_logico':
+            self.if3(proxToken)
+        elif proxToken['token'] == 'identificador':
+            self.if3(proxToken)
+        else:
+            raise Exception, 'if2 não é válido'
+        
+    def if3 (self, token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'fim_expressao':
+            self.if4(proxToken)
+        elif proxToken['token'] == 'negacao':
+            self.if3(proxToken)
+        elif self.isOperador(proxToken):
+            self.if2(proxToken)
+        else:
+            raise Exception, 'if3 não é válido'
+
+    # bloco
+    def if4 (self, token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'inicio_bloco':
+            self.if5(proxToken)
+        else:
+            raise Exception, 'if4 não é válido'
+
+    def if5 (self, token):
+        proxToken = self.proximoToken()
+        while proxToken['token']!='fim_expressao':
+            self.init(proxToken)
+        else:
+            self.if6(proxToken)
+        #    raise Exception, 'if5 não é válido'
+
+    def if6 (self, token):
+        proxToken = self.proximoToken()
+        if proxToken['token'] == 'else':
+            self.if7(proxToken)
+        else:
+            self.insereProximoToken(proxToken)
+
+    # def if7 (self, token):
+    #     proxToken = self.proximoToken()
+    #     if
