@@ -2,16 +2,16 @@
 	<type>grammar</type>
 	<!--The list of productions.-->
 	<production>
-		<left>S</left>
-		<right>viE;</right>
+		<left>X</left>
+		<right>viE;S</right>
 	</production>
 	<production>
-		<left>S</left>
-		<right>sE;</right>
+		<left>X</left>
+		<right>sE;S</right>
 	</production>
 	<production>
-		<left>S</left>
-		<right>tV;</right>
+		<left>X</left>
+		<right>tV;S</right>
 	</production>
 	<production>
 		<left>E</left>
@@ -63,7 +63,7 @@
 	</production>
 	<production>
 		<left>S</left>
-		<right>I</right>
+		<right>IS</right>
 	</production>
 	<production>
 		<left>I</left>
@@ -103,6 +103,14 @@
 	</production>
 	<production>
 		<left>C</left>
+		<right/>
+	</production>
+	<production>
+		<left>S</left>
+		<right>X</right>
+	</production>
+	<production>
+		<left>S</left>
 		<right/>
 	</production>
 </structure>

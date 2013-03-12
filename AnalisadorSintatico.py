@@ -16,13 +16,13 @@ class AnalisadorSintatico:
     #        lista := list(dict['lexema'=>'valor','token'=>'valor','token_tipo'=>'valor'], ... ,dict['lexema'=>'valor','token'=>'valor','token_tipo'=>'valor'])
     def __init__(self,listaTokens,log):
         self.__log          = log
-        self.__log.write('iniciando AnalisadorSintatico\n')
+        self.__log.write('Classe: AnalisadorSintatico \n')
         try:
             self.__listaTokens  = listaTokens
             self.__posicaoLista = 0;
             self.__tamanhoLista = len( self.__listaTokens )
         except:
-            raise Exception, 'Algo de errado ocorreu na inicialização do Analisador Sintático\n'
+            raise Exception, '__init__: Algo de errado ocorreu na inicialização do Analisador Sintático\n'
             
     #
     # ProximoToken
@@ -32,17 +32,16 @@ class AnalisadorSintatico:
     def proximoToken(self,posicao = 0):
         try:
             topo = self.__listaTokens.pop(0)
-            print 'Próximo: '+str(topo)
+            #print 'Próximo: '+str(topo)
             return topo
         except:
-            self.__log.write('Fim da lista\n')
             return None
         
     def insereProximoToken(self,token):
         try:
             self.__listaTokens.insert(0,token)
         except:
-            raise Exception, 'Não inseriu na lista'
+            raise Exception, 'Sintatico::InsereProximoToken Não inseriu na lista o token '+str(token)+'\n'
         
     def isBalanceado(self):
         if self.__contadorParen == 0:
@@ -78,24 +77,24 @@ class AnalisadorSintatico:
             self.if1(token)
         elif token['token'] == 'fim_comando':
             if self.__contadorParen % 2 != 0:
-                raise Exception, 'fim_comando balanceamento está incorreto'
+                raise Exception, 'Sintatico::Init fim_comando balanceamento está incorreto. Token '+str(token)+'\n'
             else:
                 None
         elif token['token'] == 'fim_expressao':
             self.__contadorParen -= 1
             if self.__contadorParen % 2 != 0:
-                raise Exception, 'init balanceamento está incorreto'
+                raise Exception, 'Sintatico::Init fim_expressao balanceamento está incorreto. Token '+str(token)+'\n'
             else:
                 None
         else:
-            raise Exception, 'init '+str(token['token'])+' invalido\n'
+            raise Exception, 'Init token '+str(token)+' não esperado.\n'
     
     def in1(self,token): 
         proxToken = self.proximoToken()
         if proxToken['token'] == 'identificador':
             self.in2(proxToken)
         else:
-            raise Exception, 'In1 não correto!'
+            raise Exception, 'In1 token '+str(token)+' não esperado.\n'
         
     def in2(self,token):
         proxToken = self.proximoToken()
@@ -105,9 +104,9 @@ class AnalisadorSintatico:
             if self.__contadorParen == 0:
                 None
             else:
-                raise Exception, 'Erro in2 não balanceado'
+                raise Exception, 'Sintatico::In2 Não balanceado.\n'
         else:
-            raise Exception, 'In2 não correto!'
+            raise Exception, 'Sintatico::In2 token '+str(token)+' não esperado.\n'
       
     def out1(self,token):
         proxToken = self.proximoToken()
@@ -128,20 +127,22 @@ class AnalisadorSintatico:
             #else:
                 #raise Exception, 'Out1 expressao não correta!'
         else:
-            raise Exception, 'out1 com'+str(proxToken)+'não correto'
+            raise Exception, 'Sintatico::Out1 token '+str(proxToken)+' não esperado.\n'
             
              
     def out2(self,token):
         proxToken = self.proximoToken()
         if proxToken['token'] == 'fim_comando':
-            if self.contadorParen == 0:
+            if self.__contadorParen == 0:
                 None
             else:
                 raise Exception, 'Erro in2 não balanceado'
         elif self.isOperador(proxToken):
             self.out1(proxToken)
+        elif proxToken['token'] == 'virgula':
+            self.out1(proxToken)
         else:
-            raise Exception, 'out2 não correto!'
+            raise Exception, 'Sintatico::Out2 token '+str(proxToken)+' não esperado.\n'
         
     def out3(self,token):
         proxToken = self.proximoToken()
@@ -157,14 +158,14 @@ class AnalisadorSintatico:
             #self.insereProximoToken(proxToken)
             #None
         else:
-            raise Exception, 'out3 não correto!'
+            raise Exception, 'Sintatico::Out3 token '+str(proxToken)+' não esperado.\n'
         
     def iden1(self, token):
         proxToken = self.proximoToken()
         if proxToken['token'] == 'atribuicao':
             self.iden2(proxToken)
         else:
-            raise Exception, 'iden1 não válido'
+            raise Exception, 'Sintatico::Iden1 token '+str(proxToken)+' não esperado.\n'
         
     def iden2(self, token):
         proxToken = self.proximoToken()
@@ -173,7 +174,7 @@ class AnalisadorSintatico:
         elif proxToken['token'] == 'identificador':
             self.iden3(proxToken)
         else:
-            raise Exception, 'iden2 não válido'         
+            raise Exception, 'Sintatico::Iden2 token '+str(proxToken)+' não esperado.\n'
     
     def expres1(self,token):
         proxToken = self.proximoToken()
@@ -185,7 +186,7 @@ class AnalisadorSintatico:
             self.__contadorParen+=1
             self.expres1(proxToken)
         else:
-            raise Exception, 'expres1 com '+str(proxToken['token'])+' erro!'
+            raise Exception, 'Sintatico::Express1 token '+str(proxToken)+' não esperado.\n'
         proxToken = self.proximoToken()
         
     def expres2(self, token):
@@ -198,7 +199,7 @@ class AnalisadorSintatico:
             self.__contadorParen -=1
             None
         else:
-            raise Exception, 'expres2 com '+str(proxToken['token'])+' erro!'
+            raise Exception, 'Sintatico::Express2 token '+str(proxToken)+' não esperado.\n'
             
     def iden3(self,token):
         proxToken = self.proximoToken()
@@ -209,7 +210,7 @@ class AnalisadorSintatico:
         elif self.isOperador(proxToken):
             self.iden2(proxToken)
         else:
-            raise Exception, 'iden3 não é válido'
+            raise Exception, 'Sintatico::Express3 token '+str(proxToken)+' não esperado.\n'
     
     def if1(self, token):
         proxToken = self.proximoToken()
@@ -217,7 +218,7 @@ class AnalisadorSintatico:
             self.__contadorParen+=1
             self.if2(proxToken)
         else:
-            raise Exception, 'if1 não é válido'
+            raise Exception, 'Sintatico::If1 token '+str(proxToken)+' não esperado.\n'
 
     def if2 (self, token):
         proxToken = self.proximoToken()
@@ -226,7 +227,7 @@ class AnalisadorSintatico:
         elif proxToken['token'] == 'identificador':
             self.if3(proxToken)
         else:
-            raise Exception, 'if2 não é válido'
+            raise Exception, 'Sintatico::If2 token '+str(proxToken)+' não esperado.\n'
         
     def if3 (self, token):
         proxToken = self.proximoToken()
@@ -237,7 +238,7 @@ class AnalisadorSintatico:
         elif self.isOperador(proxToken):
             self.if2(proxToken)
         else:
-            raise Exception, 'if3 não é válido'
+            raise Exception, 'Sintatico::If3 token '+str(proxToken)+' não esperado.\n'
 
     # bloco
     def if4 (self, token):
@@ -245,7 +246,7 @@ class AnalisadorSintatico:
         if proxToken['token'] == 'inicio_bloco':
             self.if5(proxToken)
         else:
-            raise Exception, 'if4 não é válido'
+            raise Exception, 'Sintatico::If4 token '+str(proxToken)+' não esperado.\n'
 
     def if5 (self, token):
         proxToken = self.proximoToken()
@@ -263,14 +264,14 @@ class AnalisadorSintatico:
         if proxToken['token'] == 'else':
             self.if7(proxToken)
         else:
-            raise Exception, 'if6 não é válido'
+            raise Exception, 'Sintatico::If6 token '+str(proxToken)+' não esperado.\n'
         
     def if7(self,token):
         proxToken = self.proximoToken()
         if proxToken['token'] == 'inicio_bloco':
             self.if8(proxToken)
         else:
-            raise Exception, 'if7 não é válido'
+            raise Exception, 'Sintatico::If7 token '+str(proxToken)+' não esperado.\n'
         
     def if8(self, token):
         proxToken = self.proximoToken()

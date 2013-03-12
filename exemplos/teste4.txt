@@ -1,0 +1,4 @@
+a := "verdadeiro";
+b := "falso";
+c := a -> b;
+out c, "f", c ;

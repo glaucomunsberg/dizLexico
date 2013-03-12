@@ -1,0 +1,16 @@
+in a,b,c;
+if(a ^ b <-> c) 
+ {
+	e:=1 ;
+	f:=0;
+	out d ^ a; 
+ }
+ else { 
+	if(d) 
+	 { 
+	 	e := 0; 
+	 }
+	 else{ f := 1; } 
+	out d V a; 
+      } 
+out e ^ f;

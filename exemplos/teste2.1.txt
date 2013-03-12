@@ -1,0 +1,2 @@
+in a, b. c10; 
+out a ^ b, a V b, a -> c;

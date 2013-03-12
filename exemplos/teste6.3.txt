@@ -1,0 +1,17 @@
+in a,b,c;
+d := (b' V a) ^ ((b <-> c) V (c'' ^ a)')';
+if(a ^ (b <-> c) 
+ {
+	e:=1 ;
+	f:=0;
+	out d ^ a; 
+ }
+ else { 
+	if(d) 
+	 { 
+	 	e := 0; 
+	 }
+	 else{ f := 1; } 
+	out d v a; 
+      } 
+out e ^ f;

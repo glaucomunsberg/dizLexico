@@ -22,7 +22,7 @@ class AnalisadorLexico:
         self.arquivoNome = nome_arquivo
         self.log = log_m
         try:
-            self.log.write('iniciando AnalisadorLexico\n')
+            self.log.write('Classe: AnalisadorLexico\n')
             self.file = open(self.arquivoNome, 'r')
             self.arquivoTemp = open('temp.txt','w')
             self.arquivoCaracteres = list()
@@ -32,7 +32,7 @@ class AnalisadorLexico:
                 self.arquivoLinhas.append( line )
                 self.arquivoNumLinhas += 1
         except:
-            raise Exception, "Erro na abertura e leitura do arquivo\n"
+            raise Exception, 'Erro na criação do arquivo temp.txt ou na abertura do arquivo '+self.arquivoNome+'.\n'
         
     #
     # Num_linhas
@@ -47,7 +47,7 @@ class AnalisadorLexico:
     #    @return: Número delinhas que haviam comentários
     #
     def remover_comentarios(self):
-        numComentarios = 0;
+        numcomentarios = 0;
         for line in self.arquivoLinhas:
             lista = list(line)
             try:
@@ -55,13 +55,13 @@ class AnalisadorLexico:
                 line = line[:comeco] + line[len(lista)-1:]
                 if comeco == 0:
                     line = '\n'
-                numComentarios+=1;
+                numcomentarios+=1;
             except ValueError:
                 None
             self.arquivoTemp.write(line)
         self.arquivoTemp.close()
         self.arquivoTemp = open('temp.txt','r')
-        return numComentarios
+        return numcomentarios
 
     #
     # Num_caracteries
@@ -93,9 +93,9 @@ class AnalisadorLexico:
     #    os arquivos.
     #
     def close(self):
-        self.log.write('Fim Sessão\n')
         os.remove('temp.txt')
         self.arquivoTemp.close()
+        self.log.write('Fim Sessão\n')
         self.file.close()
         self.log.close()
        
@@ -106,7 +106,7 @@ class AnalisadorLexico:
 class QualLexema:
     __arquivo               = None
     __tokensProcessados     = None
-    __processouTokens             = None
+    __processouTokens       = None
     __log                   = None
     __arquivoCaracteres     = None
     __arquivoNumCaracteres  = None
@@ -123,10 +123,10 @@ class QualLexema:
         self.__arquivoCaracteres    = arquivoCaracteres
         self.__caracterAtual        = -1
         self.__arquivoNumCaracteres = len(arquivoCaracteres)
-        self.__expressaoCaractVali  = re.compile("[*0-9a-zA-Z,\"-.(){}=;<>^' \n\t\r\b*:*]")
-        self.__expressaoIsAlfaNum   = re.compile("[*a-zA-Z0-9*]")
-        self.__expressaoNaoReserva  = re.compile("[a-df-hj-np-zA-UX-Z]")
-        self.__log.write('iniciando QualLexema\n')
+        self.__expressaoCaractVali  = re.compile("[*0-9a-zV,\"-.(){}=;<>^' \n\t\r\b*:*]")
+        self.__expressaoIsAlfaNum   = re.compile("[*a-z0-9*]")
+        self.__expressaoNaoReserva  = re.compile("[a-df-hj-np-z]")
+        self.__log.write('Classe: QualLexema\n')
     #  
     # GetProximoCaracter
     #    retorna o próximo caracterie até que não
@@ -196,7 +196,7 @@ class QualLexema:
         if self.__processouTokens:
             return self.__tokensProcessados
         else:
-            self.__log.write('\nNão há tokens processados,chame antes o método levantarLexemas()\n')
+            self.__log.write('\nAtenção! Não há tokens processados,chame antes o método levantarLexemas()\n')
             return self.__processouTokens
 
 
@@ -250,9 +250,9 @@ class QualLexema:
             elif caracter == ' ' or caracter == '\n' or caracter == '\t' or caracter == '\b' or caracter == '\r':
                 exit
             else:
-                raise Exception, "q0 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q0 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q0 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q0 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
             
     def q1(self,processado):
         caracter = self.getProximoCaracter()
@@ -264,17 +264,17 @@ class QualLexema:
             elif caracter == 't':
                 self.q14(processado+caracter)
             else:
-                raise Exception, "q1 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q1 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q1 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q1 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
     #
     # FINAL
     #     false_logico
     #    
     def q2(self,processado):
-        inserir = {'token':'valor_logico', 'lexema':'false'}
+        inserir = {'token':'valor_logico', 'lexema':processado}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
         
     #
     # Misto
@@ -287,16 +287,16 @@ class QualLexema:
             else:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 exit
             else:
-                raise Exception, "q3 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q3 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
         
     #
     # Misto
@@ -312,15 +312,15 @@ class QualLexema:
             else:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q4 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q4 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # Misto
@@ -338,15 +338,15 @@ class QualLexema:
             else:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q4 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q5 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
             
     #
     # Misto
@@ -362,15 +362,15 @@ class QualLexema:
             else:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q4 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q6 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # Misto
@@ -386,15 +386,15 @@ class QualLexema:
             else:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q4 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q7 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # Misto
@@ -410,15 +410,15 @@ class QualLexema:
             else:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q4 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q8 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # Misto
@@ -431,15 +431,15 @@ class QualLexema:
             else:
                 inserir = {'token':'else'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q9 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q9 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
             
     #
     # Misto
@@ -452,15 +452,15 @@ class QualLexema:
             else:
                 inserir = {'token':'if'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q10 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q10 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # Misto
@@ -473,15 +473,15 @@ class QualLexema:
             else:
                 inserir = {'token':'in'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q10 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q10 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
 #
     # Misto
@@ -497,24 +497,24 @@ class QualLexema:
             else:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
             else:
-                raise Exception, "q4 com "+caracter+" não é valido!\n"
+                raise Exception, "Léxico::q12 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
                     
     #
     # FINAL
     #     true_logico
     #
     def q13(self,processado):
-        inserir = {'token':'valor_logico','lexema':'true'}
+        inserir = {'token':'valor_logico','lexema':processado}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write(str(inserir)+'\n')
 
     def q14(self,processado):
         caracter = self.getProximoCaracter()
@@ -522,9 +522,9 @@ class QualLexema:
             if caracter == 'r':
                 self.q41(processado+caracter)
             else:
-                raise Exception, "q14 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q14 com "+caracter+"  não era esperado.\n"
         else:
-            raise Exception, "q14 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q14 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
          
     def q15(self,processado):
         caracter = self.getProximoCaracter()
@@ -534,9 +534,9 @@ class QualLexema:
             elif caracter == '"':
                 self.q13(processado+caracter)
             else:
-                raise Exception, "q15 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q15 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q15 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q15 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
       
     def q16(self,processado):
         caracter = self.getProximoCaracter()
@@ -544,9 +544,9 @@ class QualLexema:
             if caracter == 'r':
                 self.q17(processado+caracter)
             else:
-                raise Exception, "q16 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q16 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q16 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q16 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
         
     def q17(self,processado):
         caracter = self.getProximoCaracter()
@@ -554,9 +554,9 @@ class QualLexema:
             if caracter == 'd':
                 self.q18(processado+caracter)
             else:
-                raise Exception, "q17 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q17 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q17 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q17 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     def q18(self,processado):
         caracter = self.getProximoCaracter()
@@ -564,9 +564,9 @@ class QualLexema:
             if caracter == 'a':
                 self.q19(processado+caracter)
             else:
-                raise Exception, "q18 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q18 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q18 com "+caracter+" não é valido!\n"               
+            raise Exception, "Léxico::q18 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"               
 
     def q19(self,processado):
         caracter = self.getProximoCaracter()
@@ -574,9 +574,9 @@ class QualLexema:
             if caracter == 'd':
                 self.q20(processado+caracter)
             else:
-                raise Exception, "q19 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q19 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q19 com "+caracter+" não é valido!\n"               
+            raise Exception, "Léxico::q19 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"               
     
     def q20(self,processado):
         caracter = self.getProximoCaracter()
@@ -584,9 +584,9 @@ class QualLexema:
             if caracter == 'e':
                 self.q21(processado+caracter)
             else:
-                raise Exception, "q20 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q20 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q20 com "+caracter+" não é valido!\n"               
+            raise Exception, "Léxico::q20 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"               
     
     def q21(self,processado):
         caracter = self.getProximoCaracter()
@@ -594,9 +594,9 @@ class QualLexema:
             if caracter == 'i':
                 self.q22(processado+caracter)
             else:
-                raise Exception, "q21 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q21 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q21 com "+caracter+" não é valido!\n"               
+            raise Exception, "Léxico::q21 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"               
     
     def q22(self,processado):
         caracter = self.getProximoCaracter()
@@ -604,9 +604,9 @@ class QualLexema:
             if caracter == 'r':
                 self.q23(processado+caracter)
             else:
-                raise Exception, "q22 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q22 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q22 com "+caracter+" não é valido!\n"               
+            raise Exception, "Léxico::q22 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"               
 
     def q23(self,processado):
         caracter = self.getProximoCaracter()
@@ -614,9 +614,9 @@ class QualLexema:
             if caracter == 'o':
                 self.q24(processado+caracter)
             else:
-                raise Exception, "q23 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q23 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q23 com "+caracter+" não é valido!\n"               
+            raise Exception, "Léxico::q23 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"               
 
     def q24(self,processado):
         caracter = self.getProximoCaracter()
@@ -624,9 +624,9 @@ class QualLexema:
             if caracter == '"':
                 self.q13(processado+caracter)
             else:
-                raise Exception, "q24 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q24 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q24 com "+caracter+" não é valido!\n"               
+            raise Exception, "Léxico::q24 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"               
     
     def q25(self,processado):
         caracter = self.getProximoCaracter()
@@ -636,9 +636,9 @@ class QualLexema:
             elif caracter == 'a':
                 self.q26(processado+caracter)
             else:
-                raise Exception, "q25 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q25 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q25 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q25 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
         
     def q26(self,processado):
         caracter = self.getProximoCaracter()
@@ -646,9 +646,9 @@ class QualLexema:
             if caracter == 'l':
                 self.q27(processado+caracter)
             else:
-                raise Exception, "q26 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q26 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q26 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q26 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     def q27(self,processado):
         caracter = self.getProximoCaracter()
@@ -656,9 +656,9 @@ class QualLexema:
             if caracter == 's':
                 self.q28(processado+caracter)
             else:
-                raise Exception, "q27 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q27 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q27 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q27 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     def q28(self,processado):
         caracter = self.getProximoCaracter()
@@ -668,9 +668,9 @@ class QualLexema:
             elif caracter == 'e':
                 self.q29(processado+caracter)
             else:
-                raise Exception, "q28 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q28 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q28 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q28 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
 
     def q29(self,processado):
@@ -679,9 +679,9 @@ class QualLexema:
             if caracter == '"':
                 self.q2(processado+caracter)
             else:
-                raise Exception, "q29 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q29 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q29 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q29 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
         
     #
     # FINAL
@@ -690,7 +690,7 @@ class QualLexema:
     def q30(self,processado):
         inserir = {'token':'virgula' }
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
         
     #
     # FINAL
@@ -699,7 +699,7 @@ class QualLexema:
     def q31(self,processado):
         inserir = {'token':'ou'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
 
     #
     # FINAL
@@ -708,7 +708,7 @@ class QualLexema:
     def q32(self,processado):
         inserir = {'token':'negacao'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
                         
     #
     # FINAL
@@ -717,7 +717,7 @@ class QualLexema:
     def q33(self,processado):
         inserir = {'token':'e'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
 
     def q34(self,processado):
         caracter = self.getProximoCaracter()
@@ -725,9 +725,9 @@ class QualLexema:
             if caracter == '>':
                 self.q35(processado+caracter)
             else:
-                raise Exception, "q34 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q34 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q34 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q34 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # FINAL
@@ -736,7 +736,7 @@ class QualLexema:
     def q35(self,processado):
         inserir = {'token':'condicional'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
         
     def q36(self,processado):
         caracter = self.getProximoCaracter()
@@ -744,9 +744,9 @@ class QualLexema:
             if caracter == '-':
                 self.q37(processado+caracter)
             else:
-                raise Exception, "q36 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q36 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q36 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q36 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     def q37(self,processado):
         caracter = self.getProximoCaracter()
@@ -754,9 +754,9 @@ class QualLexema:
             if caracter == '>':
                 self.q38(processado+caracter)
             else:
-                raise Exception, "q37 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q37 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q37 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q37 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # FINAL
@@ -765,7 +765,7 @@ class QualLexema:
     def q38(self,processado):
         inserir = {'token':'bicondicional'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
     
     #
     # FINAL
@@ -774,7 +774,7 @@ class QualLexema:
     def q39(self,processado):
         inserir = {'token':'fim_comando'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
     #
     # FINAL
     #     inicio_expressao
@@ -782,7 +782,7 @@ class QualLexema:
     def q40(self,processado):
         inserir = {'token':'inicio_expressao' }
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
                         
     def q41(self,processado):
         caracter = self.getProximoCaracter()
@@ -790,9 +790,9 @@ class QualLexema:
             if caracter == 'u':
                 self.q45(processado+caracter)
             else:
-                raise Exception, "q41 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q41 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q41 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q41 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # FINAL
@@ -801,7 +801,7 @@ class QualLexema:
     def q42(self,processado):
         inserir = {'token':'fim_expressao' }
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
         
     def q43(self,processado):
         caracter = self.getProximoCaracter()
@@ -809,9 +809,9 @@ class QualLexema:
             if caracter == '=':
                 self.q44(processado+caracter)
             else:
-                raise Exception, "q43 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q43 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q43 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q43 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # FINAL
@@ -820,7 +820,7 @@ class QualLexema:
     def q44(self,processado):
         inserir = {'token':'atribuicao'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))      
+        self.__log.write( str(inserir)+'\n')      
 
     def q45(self,processado):
         caracter = self.getProximoCaracter()
@@ -828,9 +828,9 @@ class QualLexema:
             if caracter == 'e':
                 self.q48(processado+caracter)
             else:
-                raise Exception, "q45 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q45 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q45 com "+caracter+" não é valido!\n"
+            raise Exception, "Léxico::q45 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"
 
     #
     # FINAL
@@ -839,7 +839,7 @@ class QualLexema:
     def q46(self,processado):
         inserir = {'token':'fim_bloco' }
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write(str(inserir)+'\n')
 
     #
     # FINAL
@@ -848,7 +848,7 @@ class QualLexema:
     def q47(self,processado):
         inserir = {'token':'inicio_bloco'}
         self.__tokensProcessados.append(inserir)
-        self.__log.write( '\n'+str(inserir))
+        self.__log.write( str(inserir)+'\n')
                 
     def q48(self,processado):
         caracter = self.getProximoCaracter()
@@ -856,9 +856,9 @@ class QualLexema:
             if caracter == '"':
                 self.q13(processado+caracter)
             else:
-                raise Exception, "q48 com "+caracter+". Oops! Não sei o que fazer\n"
+                raise Exception, "Léxico::q48 com "+caracter+" não era esperado.\n"
         else:
-            raise Exception, "q48 com "+caracter+" não é valido!\n"   
+            raise Exception, "Léxico::q48 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"   
         
     #
     # Misto
@@ -871,13 +871,12 @@ class QualLexema:
             else:
                 inserir = {'token':'out'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( '\n'+str(inserir))
+                self.__log.write( str(inserir)+'\n')
                 self.q0(caracter)
         else:
             if caracter == None:
                 inserir = {'lexema':processado,'token':'identificador'}
                 self.__tokensProcessados.append(inserir)
-                self.__log.write( str(inserir) )
-                self.__log.write('\r\n')
+                self.__log.write( str(inserir)+'\n' )
             else:
-                raise Exception, "q9 com "+caracter+" não é valido!\n"         
+                raise Exception, "Léxico::q9 com "+caracter+" não é reconhecido pelo analisador Léxico.\n"         
